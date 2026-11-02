@@ -1,0 +1,212 @@
+/* Se definen los colores generales para facilitar su modificación. */
+:root {
+    --color-fondo: #ffffff;
+    --color-texto: #171717;
+    --color-secundario: #595959;
+    --color-superficie: #f5f5f5;
+    --color-borde: #dedede;
+}
+
+/* Se establece el desplazamiento suave entre las secciones. */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Se configura la apariencia general de la página. */
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--color-texto);
+    background-color: var(--color-fondo);
+    line-height: 1.6;
+}
+
+/* Se deja un espacio al navegar hacia una sección. */
+section {
+    scroll-margin-top: 24px;
+}
+
+/* Se personaliza el nombre tipográfico de la barbería. */
+.navbar-brand {
+    font-size: 1.15rem;
+    letter-spacing: 1.5px;
+}
+
+/* Se mejora el espacio alrededor de los enlaces del menú. */
+.navbar-nav {
+    gap: 12px;
+}
+
+.nav-link {
+    color: var(--color-secundario);
+    font-weight: 500;
+}
+
+.nav-link:hover,
+.nav-link:focus {
+    color: var(--color-texto);
+    text-decoration: underline;
+    text-underline-offset: 6px;
+}
+
+/* Se limita el ancho del título y se centra en pantallas pequeñas. */
+#inicio h1 {
+    max-width: 850px;
+    margin-inline: auto;
+    letter-spacing: -1.5px;
+    line-height: 1.15;
+}
+
+/* Se limita el ancho de la descripción para facilitar su lectura. */
+#inicio .lead {
+    max-width: 650px;
+    margin-inline: auto;
+}
+
+/* Se ajusta el espacio entre letras del texto introductorio. */
+#inicio .text-uppercase {
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+}
+
+/* Se establece una apariencia uniforme para los títulos de sección. */
+h2 {
+    letter-spacing: -0.5px;
+}
+
+/* Se personalizan las tarjetas sin alterar la cuadrícula de Bootstrap. */
+.card {
+    border: 1px solid var(--color-borde);
+    border-radius: 12px;
+    background-color: var(--color-fondo);
+}
+
+.card-title {
+    margin-bottom: 16px;
+}
+
+.card-body .fs-3 {
+    margin-bottom: 24px;
+}
+
+/* Se unifica la apariencia de botones y enlaces con estilo de botón. */
+.btn {
+    padding: 11px 22px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.btn-dark {
+    --bs-btn-bg: #171717;
+    --bs-btn-border-color: #171717;
+    --bs-btn-hover-bg: #333333;
+    --bs-btn-hover-border-color: #333333;
+    --bs-btn-active-bg: #333333;
+    --bs-btn-active-border-color: #333333;
+}
+
+/* Se resalta el formulario como un bloque independiente. */
+#formularioReserva {
+    padding: 28px;
+    border: 1px solid var(--color-borde);
+    border-radius: 12px;
+    background-color: var(--color-fondo);
+}
+
+/* Se mejora la legibilidad de las etiquetas y los campos. */
+.form-label {
+    font-weight: 600;
+}
+
+.form-control,
+.form-select {
+    min-height: 46px;
+    border-color: #b8b8b8;
+    border-radius: 8px;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--color-texto);
+    box-shadow: 0 0 0 3px rgb(23 23 23 / 12%);
+}
+
+/* Se diferencia el selector cuando todavía no está disponible. */
+.form-select:disabled {
+    color: var(--color-secundario);
+    background-color: var(--color-superficie);
+}
+
+/* Se evita que los mensajes largos desborden su contenedor. */
+#mensajeReserva,
+#listaReservas {
+    overflow-wrap: anywhere;
+}
+
+/* Se separan visualmente las reservas registradas. */
+#listaReservas {
+    gap: 12px;
+}
+
+#listaReservas .list-group-item {
+    padding: 20px;
+    border: 1px solid var(--color-borde);
+    border-radius: 10px;
+}
+
+/* Se mantiene visible el foco al navegar mediante el teclado. */
+a:focus-visible,
+button:focus-visible {
+    outline: 3px solid var(--color-texto);
+    outline-offset: 4px;
+}
+
+/* Se aplica un fondo discreto al pie de página. */
+footer {
+    background-color: var(--color-superficie);
+}
+
+/* Se alinean el título y la descripción cuando el inicio tiene dos columnas. */
+@media (min-width: 992px) {
+    #inicio h1,
+    #inicio .lead {
+        margin-inline: 0;
+    }
+}
+
+/* Se ajustan los espacios y tamaños para pantallas pequeñas. */
+@media (max-width: 767.98px) {
+    .navbar-brand {
+        font-size: 1rem;
+        letter-spacing: 1px;
+    }
+
+    .navbar-nav {
+        gap: 0;
+        padding-block: 12px;
+    }
+
+    #inicio > .container {
+        padding-block: 24px !important;
+    }
+
+    #inicio h1 {
+        font-size: 2.3rem;
+        letter-spacing: -1px;
+    }
+
+    #inicio .lead {
+        font-size: 1.05rem;
+    }
+
+    #formularioReserva {
+        padding: 20px;
+    }
+}
+
+/* Se respeta la preferencia de reducir el movimiento en pantalla. */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+}

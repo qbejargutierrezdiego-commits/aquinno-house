@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="description"
+        content="Aquinno House: servicios de barbería y demostración de reservas de citas."
+    >
+
+    <title>AQUINNO HOUSE | Barbería</title>
+
+    <!-- Se cargan los estilos de Bootstrap mediante CDN. -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+        crossorigin="anonymous"
+    >
+
+    <!-- Se cargan los estilos propios después de Bootstrap. -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <!-- Se presenta el nombre de la barbería y el menú de navegación. -->
+    <header class="border-bottom bg-white">
+        <nav class="navbar navbar-expand-md" aria-label="Navegación principal">
+            <div class="container">
+                <a class="navbar-brand fw-bold" href="#inicio">
+                    AQUINNO HOUSE
+                </a>
+
+                <!-- Se permite desplegar el menú en pantallas pequeñas. -->
+                <button
+                    class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#menuPrincipal"
+                    aria-controls="menuPrincipal"
+                    aria-expanded="false"
+                    aria-label="Abrir o cerrar el menú"
+                >
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="menuPrincipal">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#inicio">Inicio</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="#servicios">Servicios</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="#reservas">Reservas</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Se presenta la barbería junto a su imagen de identidad visual. -->
+        <section id="inicio" class="py-5" aria-labelledby="tituloInicio">
+            <div class="container py-5">
+                <div class="row align-items-center g-5">
+                    <div class="col-lg-7 text-center text-lg-start">
+                        <p class="text-uppercase text-secondary fw-semibold">
+                            Barbería y cuidado personal
+                        </p>
+
+                        <h1 id="tituloInicio" class="display-4 fw-bold">
+                            Tu estilo, nuestra pasión.
+                        </h1>
+
+                        <p class="lead text-secondary mt-3 mb-4">
+                            Disfruta de una experiencia de barbería moderna,
+                            donde cada detalle cuenta.
+                        </p>
+
+                        <a href="#reservas" class="btn btn-dark btn-lg">
+                            Reservar cita
+                        </a>
+                    </div>
+
+                    <!-- Se adapta la imagen sin alterar sus proporciones. -->
+                    <div class="col-lg-5 text-center">
+                        <img
+                            src="img/logo-aquinno.jpeg"
+                            alt="Casa Aquinno, barbería y spa. Alquiler y venta de ternos."
+                            class="img-fluid rounded-3 w-75"
+                            width="666"
+                            height="666"
+                        >
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Se muestran los servicios mediante tarjetas de Bootstrap. -->
+        <section
+            id="servicios"
+            class="py-5 bg-light"
+            aria-labelledby="tituloServicios"
+        >
+            <div class="container">
+                <div class="text-center mb-4">
+                    <h2 id="tituloServicios" class="fw-bold">Servicios</h2>
+
+                    <p class="text-secondary">
+                        Elige el servicio que mejor se adapte a tu estilo.
+                    </p>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <article class="card h-100">
+                            <div class="card-body p-4 d-flex flex-column">
+                                <h3 class="h4 card-title">Corte clásico</h3>
+                                <p class="text-secondary">Duración: 30 minutos</p>
+                                <p class="fs-3 fw-bold">S/ 25.00</p>
+
+                                <!-- Se identifica el servicio para seleccionarlo con JavaScript. -->
+                                <button
+                                    type="button"
+                                    class="btn btn-dark mt-auto"
+                                    data-servicio="clasico"
+                                    aria-label="Reservar corte clásico"
+                                >
+                                    Reservar
+                                </button>
+                            </div>
+                        </article>
+                    </div>
+
+                    <div class="col-md-4">
+                        <article class="card h-100">
+                            <div class="card-body p-4 d-flex flex-column">
+                                <h3 class="h4 card-title">Corte moderno</h3>
+                                <p class="text-secondary">Duración: 30 minutos</p>
+                                <p class="fs-3 fw-bold">S/ 30.00</p>
+
+                                <button
+                                    type="button"
+                                    class="btn btn-dark mt-auto"
+                                    data-servicio="moderno"
+                                    aria-label="Reservar corte moderno"
+                                >
+                                    Reservar
+                                </button>
+                            </div>
+                        </article>
+                    </div>
+
+                    <div class="col-md-4">
+                        <article class="card h-100">
+                            <div class="card-body p-4 d-flex flex-column">
+                                <h3 class="h4 card-title">Corte y barba</h3>
+                                <p class="text-secondary">Duración: 30 minutos</p>
+                                <p class="fs-3 fw-bold">S/ 40.00</p>
+
+                                <button
+                                    type="button"
+                                    class="btn btn-dark mt-auto"
+                                    data-servicio="corte-barba"
+                                    aria-label="Reservar corte y barba"
+                                >
+                                    Reservar
+                                </button>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+
+                <p class="small text-secondary text-center mt-4 mb-0">
+                    Los precios son valores de demostración y no representan
+                    tarifas confirmadas de la barbería.
+                </p>
+            </div>
+        </section>
+
+        <!-- Se presenta el formulario y la lista de reservas del navegador. -->
+        <section
+            id="reservas"
+            class="py-5"
+            aria-labelledby="tituloReservas"
+        >
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="text-center mb-4">
+                            <h2 id="tituloReservas" class="fw-bold">
+                                Reserva tu cita
+                            </h2>
+
+                            <p class="text-secondary">
+                                Completa los datos y selecciona un horario disponible.
+                            </p>
+
+                            <p class="small text-secondary">
+                                Atención de lunes a sábado, de 9:00 a. m.
+                                a 6:00 p. m. Domingo cerrado.
+                            </p>
+                        </div>
+
+                        <!-- Se aclara el alcance del almacenamiento local. -->
+                        <p
+                            id="avisoLocal"
+                            class="border rounded p-3 bg-light small"
+                        >
+                            Esta es una demostración académica. Las reservas se
+                            guardan únicamente en este navegador y no se comparten
+                            con otros dispositivos o usuarios.
+                        </p>
+
+                        <!-- Se utilizan restricciones HTML y validaciones con JavaScript. -->
+                        <form
+                            id="formularioReserva"
+                            aria-describedby="avisoLocal"
+                        >
+                            <p class="small text-secondary">
+                                Todos los campos son obligatorios.
+                            </p>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="nombre" class="form-label">
+                                        Nombre completo
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="nombre"
+                                        name="nombre"
+                                        autocomplete="name"
+                                        minlength="2"
+                                        maxlength="100"
+                                        required
+                                    >
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="celular" class="form-label">
+                                        Número de celular
+                                    </label>
+
+                                    <input
+                                        type="tel"
+                                        class="form-control"
+                                        id="celular"
+                                        name="celular"
+                                        autocomplete="tel"
+                                        inputmode="numeric"
+                                        pattern="9[0-9]{8}"
+                                        minlength="9"
+                                        maxlength="9"
+                                        placeholder="987654321"
+                                        aria-describedby="ayudaCelular"
+                                        title="Se requiere un celular peruano de nueve dígitos que comience con 9."
+                                        required
+                                    >
+
+                                    <div id="ayudaCelular" class="form-text">
+                                        Debe tener nueve dígitos y comenzar con 9.
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="servicio" class="form-label">
+                                        Servicio solicitado
+                                    </label>
+
+                                    <select
+                                        class="form-select"
+                                        id="servicio"
+                                        name="servicio"
+                                        required
+                                    >
+                                        <option value="">
+                                            Selecciona un servicio
+                                        </option>
+                                        <option value="clasico">
+                                            Corte clásico — S/ 25.00
+                                        </option>
+                                        <option value="moderno">
+                                            Corte moderno — S/ 30.00
+                                        </option>
+                                        <option value="corte-barba">
+                                            Corte y barba — S/ 40.00
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="fecha" class="form-label">
+                                        Fecha de la cita
+                                    </label>
+
+                                    <input
+                                        type="date"
+                                        class="form-control"
+                                        id="fecha"
+                                        name="fecha"
+                                        required
+                                    >
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="horario" class="form-label">
+                                        Horario disponible
+                                    </label>
+
+                                    <!-- Se cargarán los horarios según la fecha seleccionada. -->
+                                    <select
+                                        class="form-select"
+                                        id="horario"
+                                        name="horario"
+                                        aria-describedby="estadoHorarios"
+                                        disabled
+                                        required
+                                    >
+                                        <option value="">
+                                            Selecciona primero una fecha
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="col-12">
+                                    <p
+                                        id="estadoHorarios"
+                                        class="small text-secondary mb-0"
+                                        role="status"
+                                    >
+                                        Las citas tienen una duración de 30 minutos.
+                                        El último horario comienza a las 5:30 p. m.
+                                    </p>
+                                </div>
+
+                                <div class="col-12">
+                                    <!-- Se enviará el formulario antes de abrir el modal. -->
+                                    <button
+                                        type="submit"
+                                        class="btn btn-dark w-100"
+                                    >
+                                        Confirmar reserva
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <!-- Se muestran los errores y los avisos de cancelación. -->
+                        <div
+                            id="mensajeReserva"
+                            class="mt-3"
+                            role="status"
+                            aria-atomic="true"
+                        ></div>
+
+                        <!-- Se mostrarán las reservas y sus botones de cancelación. -->
+                        <div class="mt-5">
+                            <h3 id="tituloListaReservas" class="h4 fw-bold">
+                                Reservas registradas
+                            </h3>
+
+                            <p id="sinReservas" class="text-secondary">
+                                Aún no hay reservas registradas en este navegador.
+                            </p>
+
+                            <ul
+                                id="listaReservas"
+                                class="list-group"
+                                aria-labelledby="tituloListaReservas"
+                            ></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Se identifica el sitio y su propósito académico. -->
+    <footer class="border-top py-4">
+        <div class="container text-center">
+            <p class="fw-bold mb-1">AQUINNO HOUSE</p>
+
+            <p class="small text-secondary mb-0">
+                Proyecto académico · Programación Web · PA1
+            </p>
+        </div>
+    </footer>
+
+    <!-- Se prepara el modal que confirmará una reserva guardada. -->
+    <div
+        class="modal fade"
+        id="modalConfirmacion"
+        tabindex="-1"
+        aria-labelledby="tituloModalConfirmacion"
+        aria-describedby="descripcionModalConfirmacion"
+        aria-hidden="true"
+    >
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2
+                        class="modal-title fs-5 fw-bold"
+                        id="tituloModalConfirmacion"
+                    >
+                        Reserva confirmada
+                    </h2>
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Cerrar confirmación"
+                    ></button>
+                </div>
+
+                <div class="modal-body">
+                    <p id="descripcionModalConfirmacion">
+                        La cita se registró correctamente en este navegador.
+                    </p>
+
+                    <!-- Se completará el resumen mediante JavaScript. -->
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">Cliente</dt>
+                        <dd
+                            class="col-sm-8 text-break"
+                            id="confirmacionNombre"
+                        ></dd>
+
+                        <dt class="col-sm-4">Servicio</dt>
+                        <dd class="col-sm-8" id="confirmacionServicio"></dd>
+
+                        <dt class="col-sm-4">Fecha</dt>
+                        <dd class="col-sm-8" id="confirmacionFecha"></dd>
+
+                        <dt class="col-sm-4">Hora</dt>
+                        <dd class="col-sm-8" id="confirmacionHora"></dd>
+
+                        <dt class="col-sm-4">Precio</dt>
+                        <dd class="col-sm-8" id="confirmacionPrecio"></dd>
+                    </dl>
+
+                    <p class="small text-secondary mt-3 mb-0">
+                        Demostración académica: esta cita no se envía
+                        a un sistema de reservas de la barbería.
+                    </p>
+                </div>
+
+                <div class="modal-footer">
+                    <!-- Se cierra la ventana sin modificar la reserva. -->
+                    <button
+                        type="button"
+                        class="btn btn-dark"
+                        data-bs-dismiss="modal"
+                    >
+                        Entendido
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Se cargan los componentes interactivos de Bootstrap. -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"
+    ></script>
+
+    <!-- Se carga la lógica propia después del contenido HTML. -->
+    <script src="js/app.js"></script>
+</body>
+</html>

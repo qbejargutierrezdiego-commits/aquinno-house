@@ -44,9 +44,6 @@ const servicios = {
     "corte-barba": { nombre: "Corte y barba", precio: 40 }
 };
 
-// Se establece la clave utilizada para guardar las reservas.
-const claveReservas = "aquinno-house-reservas";
-
 // Se obtienen los elementos del formulario y de la lista.
 const formulario = document.querySelector("#formularioReserva");
 const campoNombre = document.querySelector("#nombre");
@@ -58,6 +55,7 @@ const estadoHorarios = document.querySelector("#estadoHorarios");
 const mensajeReserva = document.querySelector("#mensajeReserva");
 const listaReservas = document.querySelector("#listaReservas");
 const sinReservas = document.querySelector("#sinReservas");
+const botonEnviar = formulario.querySelector('button[type="submit"]');
 
 // Se obtienen los elementos del modal de confirmación.
 const elementoModal = document.querySelector("#modalConfirmacion");
@@ -148,65 +146,42 @@ function limpiarMensaje() {
     mensajeReserva.textContent = "";
 }
 
-// Se recuperan las reservas y se comprueba su estructura básica.
-function leerReservas() {
-    try {
-        const contenido = localStorage.getItem(claveReservas);
-        const reservas = contenido === null ? [] : JSON.parse(contenido);
-
-        const datosValidos =
-            Array.isArray(reservas) &&
-            reservas.every((reserva) =>
-                reserva !== null &&
-                typeof reserva === "object" &&
-                typeof reserva.id === "string" &&
-                typeof reserva.nombre === "string" &&
-                typeof reserva.celular === "string" &&
-                Object.hasOwn(servicios, reserva.servicio) &&
-                /^\d{4}-\d{2}-\d{2}$/.test(reserva.fecha) &&
-                horariosAtencion.includes(reserva.horario) &&
-                Number.isFinite(reserva.precio)
-            );
-
-        if (!datosValidos) {
-            throw new Error("Los datos guardados no son válidos.");
-        }
-
-        return reservas;
-    } catch {
-        mostrarMensaje(
-            "No se pudieron leer las reservas guardadas. " +
-            "Se debe revisar el almacenamiento del navegador antes de continuar."
-        );
-
-        return null;
-    }
+// Se convierte una reserva del servicio al formato que usa la página.
+// El servicio envía la hora como HH:mm:ss, por eso se conservan solo HH:mm.
+function normalizarReserva(reserva) {
+    return {
+        id: reserva.id,
+        nombre: reserva.nombre,
+        celular: reserva.celular,
+        servicio: reserva.servicio,
+        fecha: reserva.fecha,
+        horario: String(reserva.hora).slice(0, 5),
+        precio: servicios[reserva.servicio]?.precio ?? 0
+    };
 }
 
-// Se guardan los cambios y se informa si falla el almacenamiento.
-function guardarReservas(reservas) {
-    try {
-        localStorage.setItem(claveReservas, JSON.stringify(reservas));
-        return true;
-    } catch {
-        mostrarMensaje(
-            "No se pudieron guardar los cambios. " +
-            "Comprueba que el navegador permita el almacenamiento local."
-        );
+// Se consultan al servicio todas las reservas registradas.
+async function obtenerReservas() {
+    const datos = await solicitarAPI();
 
-        return false;
-    }
+    return datos.map(normalizarReserva);
 }
 
-// Se comprueba si una fecha y hora ya tienen una reserva.
-function estaOcupado(reservas, fecha, horario) {
-    return reservas.some((reserva) =>
-        reserva.fecha === fecha && reserva.horario === horario
+// Se consultan al servicio los horarios libres de una fecha.
+async function obtenerDisponibles(fecha) {
+    const datos = await solicitarAPI(
+        `/disponibilidad?fecha=${encodeURIComponent(fecha)}`
     );
+
+    return datos.map((hora) => String(hora).slice(0, 5));
 }
 
-// Se actualizan los horarios según la fecha, la hora actual y las reservas.
-function actualizarHorarios() {
+// Se evita que una respuesta lenta reemplace a una consulta más reciente.
+let consultaHorarios = 0;
+
+// Se actualizan los horarios según la disponibilidad que informa el servicio.
+async function actualizarHorarios() {
+    const consulta = ++consultaHorarios;
     const horarioAnterior = campoHorario.value;
 
     campoFecha.min = obtenerFechaLocal();
@@ -226,10 +201,21 @@ function actualizarHorarios() {
         return;
     }
 
-    const reservas = leerReservas();
+    estadoHorarios.textContent = "Consultando disponibilidad...";
 
-    if (reservas === null) {
-        estadoHorarios.textContent = "No se pudo consultar la disponibilidad.";
+    let libres;
+
+    try {
+        libres = await obtenerDisponibles(campoFecha.value);
+    } catch (error) {
+        if (consulta === consultaHorarios) {
+            estadoHorarios.textContent = error.message;
+        }
+        return;
+    }
+
+    // Si el usuario cambió la fecha mientras se esperaba, se descarta esta respuesta.
+    if (consulta !== consultaHorarios) {
         return;
     }
 
@@ -237,21 +223,21 @@ function actualizarHorarios() {
     let disponibles = 0;
 
     horariosAtencion.forEach((horario) => {
-        const ocupado = estaOcupado(reservas, campoFecha.value, horario);
+        const libre = libres.includes(horario);
         const pasado = crearFechaHora(campoFecha.value, horario) <= ahora;
 
         let etiqueta = formatearHora(horario);
 
-        if (ocupado) {
-            etiqueta += " — Ocupado";
+        if (libre) {
+            disponibles++;
         } else if (pasado) {
             etiqueta += " — Horario pasado";
         } else {
-            disponibles++;
+            etiqueta += " — Ocupado";
         }
 
         const opcion = new Option(etiqueta, horario);
-        opcion.disabled = ocupado || pasado;
+        opcion.disabled = !libre;
         campoHorario.add(opcion);
     });
 
@@ -275,14 +261,14 @@ function obtenerResumen(reserva) {
     const servicio = servicios[reserva.servicio];
 
     return (
-        `${reserva.nombre} · ${servicio.nombre} · ` +
+        `${reserva.nombre} · ${servicio ? servicio.nombre : reserva.servicio} · ` +
         `${formatearFecha(reserva.fecha)} · ` +
         `${formatearHora(reserva.horario)} · ` +
         `S/ ${reserva.precio.toFixed(2)}`
     );
 }
 
-// Se completa el modal únicamente después de guardar la reserva.
+// Se completa el modal únicamente después de que el servicio confirma la reserva.
 function mostrarConfirmacion(reserva) {
     // Se conserva una confirmación visible si Bootstrap no pudo cargarse.
     if (!modalConfirmacion) {
@@ -302,27 +288,23 @@ function mostrarConfirmacion(reserva) {
     modalConfirmacion.show();
 }
 
-// Se muestran las reservas mediante elementos creados de forma segura.
-function mostrarReservas() {
-    const reservas = leerReservas();
+// Se muestran las reservas que devuelve el servicio.
+async function mostrarReservas() {
+    let reservas;
 
-    listaReservas.replaceChildren();
-
-    if (reservas === null) {
+    try {
+        reservas = await obtenerReservas();
+    } catch (error) {
+        listaReservas.replaceChildren();
         sinReservas.hidden = false;
-        sinReservas.textContent = "No se pudo cargar la lista de reservas.";
+        sinReservas.textContent = error.message;
         return;
     }
 
-    sinReservas.textContent =
-        "Aún no hay reservas registradas en este navegador.";
-    sinReservas.hidden = reservas.length > 0;
+    listaReservas.replaceChildren();
 
-    reservas.sort((primera, segunda) =>
-        `${primera.fecha} ${primera.horario}`.localeCompare(
-            `${segunda.fecha} ${segunda.horario}`
-        )
-    );
+    sinReservas.textContent = "Aún no hay reservas registradas.";
+    sinReservas.hidden = reservas.length > 0;
 
     reservas.forEach((reserva) => {
         const elemento = document.createElement("li");
@@ -344,7 +326,7 @@ function mostrarReservas() {
         );
 
         botonCancelar.addEventListener("click", () => {
-            cancelarReserva(reserva.id);
+            cancelarReserva(reserva);
         });
 
         elemento.append(resumen, botonCancelar);
@@ -352,23 +334,8 @@ function mostrarReservas() {
     });
 }
 
-// Se solicita confirmación antes de eliminar una reserva.
-function cancelarReserva(id) {
-    const reservas = leerReservas();
-
-    if (reservas === null) {
-        return;
-    }
-
-    const reserva = reservas.find((elemento) => elemento.id === id);
-
-    if (!reserva) {
-        mostrarReservas();
-        actualizarHorarios();
-        mostrarMensaje("La reserva ya no está registrada.", "warning");
-        return;
-    }
-
+// Se solicita confirmación y luego se pide al servicio cancelar la reserva.
+async function cancelarReserva(reserva) {
     const confirmado = window.confirm(
         `¿Se desea cancelar esta reserva?\n\n${obtenerResumen(reserva)}`
     );
@@ -377,28 +344,23 @@ function cancelarReserva(id) {
         return;
     }
 
-    // Se consultan nuevamente los datos antes de guardar la cancelación.
-    const reservasActuales = leerReservas();
-
-    if (reservasActuales === null) {
+    try {
+        await solicitarAPI(`/${reserva.id}`, { method: "DELETE" });
+    } catch (error) {
+        await mostrarReservas();
+        await actualizarHorarios();
+        mostrarMensaje(error.message, "warning");
         return;
     }
 
-    const reservasRestantes = reservasActuales.filter(
-        (elemento) => elemento.id !== id
-    );
-
-    if (!guardarReservas(reservasRestantes)) {
-        return;
-    }
-
-    mostrarReservas();
-    actualizarHorarios();
+    await mostrarReservas();
+    await actualizarHorarios();
     mostrarMensaje("La reserva se canceló correctamente.", "success");
 }
 
-// Se validan los datos y la disponibilidad antes de guardar.
-function confirmarReserva(evento) {
+// Se validan los datos en la página y se envía la reserva al servicio,
+// que vuelve a validar y decide si el horario sigue libre.
+async function confirmarReserva(evento) {
     evento.preventDefault();
     limpiarMensaje();
 
@@ -449,38 +411,37 @@ function confirmarReserva(evento) {
         return;
     }
 
-    const reservas = leerReservas();
-
-    if (reservas === null) {
-        return;
-    }
-
-    if (estaOcupado(reservas, campoFecha.value, horario)) {
-        actualizarHorarios();
-        mostrarMensaje(
-            "Ese horario ya está ocupado. Selecciona otro horario."
-        );
-        return;
-    }
-
-    const nuevaReserva = {
-        id: crypto.randomUUID(),
+    const solicitud = {
         nombre: campoNombre.value,
         celular: campoCelular.value,
         servicio: campoServicio.value,
         fecha: campoFecha.value,
-        horario: horario,
-        precio: servicios[campoServicio.value].precio
+        hora: horario
     };
 
-    if (!guardarReservas([...reservas, nuevaReserva])) {
+    botonEnviar.disabled = true;
+
+    let creada;
+
+    try {
+        creada = await solicitarAPI("", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(solicitud)
+        });
+    } catch (error) {
+        botonEnviar.disabled = false;
+        await actualizarHorarios();
+        mostrarMensaje(error.message);
         return;
     }
 
+    botonEnviar.disabled = false;
+
     formulario.reset();
-    mostrarReservas();
-    actualizarHorarios();
-    mostrarConfirmacion(nuevaReserva);
+    await mostrarReservas();
+    await actualizarHorarios();
+    mostrarConfirmacion(normalizarReserva(creada));
 }
 
 // Se selecciona el servicio correspondiente al pulsar una tarjeta.
@@ -508,20 +469,10 @@ formulario.addEventListener("submit", confirmarReserva);
 
 // Se devuelve el foco al formulario después de cerrar el modal.
 elementoModal.addEventListener("hidden.bs.modal", () => {
-    formulario.querySelector('button[type="submit"]').focus({
-        preventScroll: true
-    });
+    botonEnviar.focus({ preventScroll: true });
 });
 
-// Se sincronizan los cambios realizados desde otra pestaña del mismo sitio.
-window.addEventListener("storage", (evento) => {
-    if (evento.key === claveReservas || evento.key === null) {
-        mostrarReservas();
-        actualizarHorarios();
-    }
-});
-
-// Se revisa la disponibilidad cuando se regresa a la página.
+// Se revisa de nuevo el servicio cuando se regresa a la página.
 window.addEventListener("focus", () => {
     mostrarReservas();
     actualizarHorarios();
